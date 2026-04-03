@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[Hahp Portfolio] HR Analytics — Retention Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0d0d0d;
+    --ink-soft: #3a3a3a;
+    --ink-muted: #888;
+    --paper: #f5f2ec;
+    --paper-warm: #ede9e0;
+    --paper-gray: #d5d1cb;
+    --accent: #c8401a;
+    --accent-pale: #f0d5cc;
+    --rule: #d4cfc6;
+    --teal: #7d5f00;
+    --gold: #bb9600;
+    --blue: #1a4a8a;
+    --purple: #94215f;
+    --nav-h: 54px;
+  }
+
+  html { overflow-y: scroll; scroll-behavior: smooth; }
+  html { scroll-snap-type: y mandatory; overflow-y: scroll; scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px; line-height: 1.6; overflow-x: hidden;
+  }
+
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 999; opacity: 0.6;
+  }
+
+  #progress {
+    position: fixed; top: 0; left: 0; height: 2px;
+    background: var(--accent); width: 0%; z-index: 1001;
+    transition: width 0.1s linear;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 3.5rem; height: var(--nav-h);
+    background: rgba(245,242,236,0.93); backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--rule); z-index: 100;
+  }
+  .nav-left { display: flex; align-items: center; }
+  .nav-back {
+    font-family: 'DM Mono', monospace; font-size: 0.63rem; letter-spacing: 0.1em;
+    text-transform: uppercase; text-decoration: none; color: var(--ink-muted);
+    display: flex; align-items: center; gap: 0.4rem; transition: color 0.2s;
+    border-right: 1px solid var(--rule); padding-right: 1.8rem; margin-right: 1.8rem;
+    height: var(--nav-h);
+  }
+  .nav-back:hover { color: var(--accent); font-size: 0.85rem; font-weight: 500; }
+  .nav-back:hover .nav-back-arrow { transform: translateX(-3px); }
+  .nav-back-arrow { font-size: 1.05rem; display: inline-block; transition: transform 0.2s; }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 300;
+    letter-spacing: 0.06em; color: var(--ink-soft);
+    text-decoration: none; cursor: pointer; transition: color 0.2s;
+  }
+  .nav-logo:hover, .nav-logo.active { color: var(--accent); font-size: 1.2rem; font-weight: 600; }
+  .nav-links { display: flex; list-style: none; }
+  .nav-links li { position: relative; }
+  .nav-links li + li::before {
+    content: ''; position: absolute; left: 0; top: 50%;
+    transform: translateY(-50%); height: 12px; width: 1px; background: var(--rule);
+  }
+  .nav-links a {
+    font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.05em;
+    text-transform: uppercase; text-decoration: none; color: var(--ink-muted);
+    transition: color 0.2s; display: flex; align-items: center; gap: 0.35rem;
+    padding: 0 1.1rem; height: var(--nav-h);
+  }
+  .nav-step { font-size: 0.75rem; opacity: 0.55; }
+  .nav-links a:hover, .nav-links a.active { color: var(--accent); font-size: 0.85rem; letter-spacing: 0.05em; font-weight: 500; }
+  .nav-links a.active .nav-step { opacity: 1; }
+
+  /* ── SNAP SECTIONS ── */
+  .snap-section {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    height: 100vh;
+    overflow: hidden;
+    padding-top: var(--nav-h);
+    display: flex;
+    flex-direction: column;
+  }
+  html.snap-active .snap-section { height: 100vh; overflow: hidden; }
+
+  .sec-inner {
+    width: 100%; max-width: 1240px; margin: 0 auto; padding: 0 3.5rem;
+    flex: 1; display: flex; flex-direction: column; min-height: 0;
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    display: flex; align-items: center; gap: 1.2rem;
+    padding: 1.2rem 0 1rem; border-bottom: 1px solid var(--rule); flex-shrink: 0;
+  }
+  .section-number {
+    font-family: 'DM Mono', monospace; font-size: 0.9rem; font-weight: 500;
+    letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-muted);
+    padding: 0.3rem 0.55rem; border: 1px solid var(--rule); line-height: 1; flex-shrink: 0;
+  }
+  .section-title { font-family: 'Cormorant Garamond', serif; font-size: 1.95rem; font-weight: 300; color: var(--ink); line-height: 1.1; }
+  .section-title em { font-style: italic; color: var(--accent); }
+
+  /* ── HERO ── */
+  .hero-section {
+    scroll-snap-align: start; scroll-snap-stop: always;
+    height: 100vh; overflow: hidden;
+    display: grid; grid-template-columns: 1fr 1fr; padding-top: var(--nav-h);
+  }
+  html.snap-active .hero-section { height: 100vh; overflow: hidden; }
+  .hero-left {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 3rem 2.8rem 3rem 3.5rem; border-right: 1px solid var(--rule);
+  }
+  .hero-tag {
+    font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 3rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .hero-tag::before { content: ''; display: block; width: 2rem; height: 1px; background: var(--accent); }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif; font-size: clamp(38px,4.4vw,64px);
+    font-weight: 300; line-height: 1.07; letter-spacing: -0.02em; margin-bottom: 2rem;
+  }
+  .hero-title em { font-style: italic; color: var(--accent); font-weight: 300; }
+  .hero-subtitle { font-size: 0.855rem; color: var(--ink-soft); line-height: 1.75; max-width: 44ch; }
+  .hero-right {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 3rem 3.5rem 3rem 2.8rem; gap: 1.8rem; background: var(--paper-warm);
+  }
+  .hero-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  .hero-stat {
+    background: var(--paper); padding: 1.2rem 1.4rem;
+    position: relative; overflow: hidden; transition: background 0.3s; cursor: default;
+  }
+  .hero-stat:hover { background: var(--paper-warm); }
+  .hero-stat::after {
+    content: ''; position: absolute; bottom: 0; left: 0;
+    width: 0; height: 2px; background: var(--accent); transition: width 0.4s ease;
+  }
+  .hero-stat:hover::after { width: 100%; }
+  .stat-number { font-family: 'Instrument Sans', sans-serif; font-size: 2rem; font-weight: 600; color: #434343; line-height: 1; margin-bottom: 0.5rem; }
+  .stat-number sup { font-size: 1.1rem; color: var(--accent); vertical-align: super; }
+  .stat-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-muted); line-height: 1.4; }
+  .tags-eyebrow {
+    font-family: 'DM Mono', monospace; font-size: 0.57rem; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--ink-muted); margin-bottom: 0.7rem;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .tags-eyebrow::before { content: ''; width: 1.5rem; height: 1px; background: var(--ink-muted); flex-shrink: 0; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .tag { font-family: 'DM Mono', monospace; font-size: 0.57rem; letter-spacing: 0.09em; text-transform: uppercase; padding: 0.32rem 0.75rem; white-space: nowrap; }
+  .tag-dark   { background: var(--ink); color: var(--paper); }
+  .tag-accent { background: var(--accent); color: #fff; }
+  .tag-teal   { background: var(--teal); color: #fff; }
+  .tag-blue   { background: var(--blue); color: #fff; }
+
+  /* ── CHALLENGES ── */
+  .challenges-section { background: var(--ink); }
+  .challenges-section .section-title { color: #f0ece4; }
+  .challenges-section .section-number { color: #555; border-color: #2e2e2e; }
+  .challenges-section .section-header { border-color: #222; }
+  .challenges-lead { font-size: 0.81rem; color: var(--ink-muted); line-height: 1.7; padding: 2rem 0; flex-shrink: 0; }
+  .challenge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #1e1e1e; }
+  .challenge-card { background: #111; padding: 1.5rem 1.7rem; display: flex; flex-direction: column; transition: background 0.3s; }
+  .challenge-card:hover { background: #161616; }
+  .challenge-tag {
+    font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 0.55rem;
+  }
+  .challenge-tag::before { content: ''; width: 1rem; height: 1px; background: var(--accent); }
+  .challenge-title { font-family: 'Cormorant Garamond', serif; font-size: 1.18rem; font-weight: 400; color: #f0ece4; margin-bottom: 0.55rem; line-height: 1.25; }
+  .challenge-body { font-size: 0.78rem; color: #777; line-height: 1.6; flex: 1; }
+  .challenge-risk { margin-top: 0.8rem; padding: 0.5rem 0.85rem; background: rgba(200,64,26,0.1); border-left: 2px solid var(--accent); }
+  .challenge-risk p { font-size: 0.73rem; color: #c09080; font-style: italic; }
+
+  /* ── MY ROLE ── */
+  .role-section { background: var(--paper-warm); }
+  .role-intro-block { display: flex; align-items: center; gap: 2.5rem; padding: 2rem 0; border-bottom: 1px solid var(--rule); flex-shrink: 0; }
+  .role-intro-text { flex: 1 1 100%; }
+  .role-intro-text p { font-size: 0.78rem; color: var(--ink-soft); line-height: 1.6; }
+  .resp-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); grid-auto-rows: minmax(225px,auto); min-height: 0; }
+  .responsibility { background: var(--paper); padding: 1.3rem 1.5rem; display: flex; flex-direction: column; transition: background 0.2s; }
+  .responsibility:hover { background: #fff; }
+  .resp-meta {
+    font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--ink-muted);
+    letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.65rem;
+    padding-bottom: 0.7rem; border-bottom: 1px solid var(--rule);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .resp-num { color: var(--accent); }
+  .resp-content h4 { font-size: 0.88rem; font-weight: 600; color: var(--ink); margin-bottom: 0.35rem; line-height: 1.3; }
+  .resp-content p { font-size: 0.77rem; color: var(--ink-soft); line-height: 1.55; }
+
+  /* ── SOLUTION / ARCHITECTURE ── */
+  .solution-section { background: var(--paper); }
+  .system-lead { font-size: 0.82rem; color: var(--ink-soft); line-height: 1.72; padding: 0.9rem 0; flex-shrink: 0; }
+
+  .arch-diagram-wrap {
+    border: 1px solid var(--rule); background: #fff; overflow: hidden;
+    flex: 1; min-height: 0; max-height: 530px;
+    display: flex; flex-direction: row;
+  }
+  .arch-img-panel {
+    flex: 1; min-width: 0;
+    padding: 1.2rem;
+    background: var(--paper-gray);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .arch-diagram-img {
+    max-width: 100%; max-height: 100%;
+    width: auto; height: auto;
+    object-fit: contain; display: block;
+    background: #fff; border: 1px solid var(--rule); border-radius: 10px;
+  }
+  .arch-diagram-fallback {
+    display: none; flex-direction: column; align-items: center;
+    justify-content: center; gap: 0.8rem; flex: 1; background: var(--paper-warm); padding: 2rem;
+  }
+  .arch-fallback-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-muted); }
+  .arch-meta {
+    width: 265px; flex-shrink: 0;
+    border-left: 1px solid var(--rule);
+    background: var(--paper-warm);
+    display: flex; flex-direction: column;
+  }
+  .arch-pillar {
+    flex: 1;
+    padding: 1rem 2rem 1rem 2rem;
+    display: flex; flex-direction: column; justify-content: center; gap: 0.9rem;
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+  }
+  .arch-pillar:last-child { border-bottom: none; }
+  .arch-pillar::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  }
+  .arch-pillar:nth-child(odd)::before  { background: var(--gold); }
+  .arch-pillar:nth-child(even)::before { background: var(--teal); }
+  .arch-pillar:last-child::before      { background: var(--accent); }
+  .arch-pillar-arrow {
+    position: absolute; bottom: -11px; left: 50%;
+    transform: translateX(-50%); z-index: 2;
+    width: 20px; height: 20px;
+    background: var(--paper-warm);
+    border: 1px solid var(--rule); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.6rem; color: var(--accent); line-height: 1;
+  }
+  .arch-pillar-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem; font-weight: 600; color: var(--ink); line-height: 1.2;
+  }
+  .arch-pillar-body { font-size: 0.75rem; color: var(--ink-soft); line-height: 1.5; }
+
+  /* ── THE SYSTEM / DASHBOARD ── */
+  .system-section { background: var(--paper-warm); }
+  .sys-slider {
+    border: 1px solid var(--rule); overflow: hidden;
+    flex: 0 1 530px; min-height: 0; display: flex; flex-direction: column;
+  }
+  .sys-track-wrap { overflow: hidden; flex: 1; min-height: 0; }
+  .sys-track {
+    display: flex; height: 100%;
+    transition: transform 0.45s cubic-bezier(0.4,0,0.2,1);
+  }
+  .sys-slide { min-width: 100%; height: 100%; display: flex; flex-direction: row; }
+  .sys-slide-meta {
+    width: 265px; flex-shrink: 0; padding: 2rem;
+    background: var(--paper-warm); border-right: 1px solid var(--rule);
+    display: flex; flex-direction: column; justify-content: center; gap: 0.9rem;
+  }
+  .sys-slide-label {
+    font-family: 'DM Mono', monospace; font-size: 0.58rem;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-muted);
+  }
+  .sys-slide-title {
+    font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 600;
+    color: var(--ink); line-height: 1.2;
+  }
+  .sys-slide-title::after { content: ''; display: block; width: 2rem; height: 2px; background: var(--accent); margin-top: 0.65rem; }
+  .sys-slide-desc { font-size: 0.76rem; color: var(--ink-soft); line-height: 1.65; }
+  .sys-slide-visual {
+    flex: 1; min-width: 0; padding: 1.2rem;
+    background: var(--paper-gray);
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .sys-slide-visual img {
+    max-width: 100%; max-height: 100%; width: auto; height: auto;
+    object-fit: contain; display: block;
+    background: #fff; border: 1px solid var(--rule); border-radius: 10px;
+  }
+  .sys-slide-visual .slide-fallback {
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0.6rem; width: 100%; height: 100%;
+  }
+  .sys-slide-visual img[data-error="1"] { display: none; }
+  .sys-slide-visual img[data-error="1"] + .slide-fallback { display: flex; }
+  .sys-controls {
+    display: flex; align-items: center; justify-content: flex-start; gap: 460px;
+    padding: 0.35rem 6rem; background: var(--ink); flex-shrink: 0;
+  }
+  .sys-dots { display: flex; gap: 5px; align-items: center; }
+  .sys-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.18); border: none; cursor: pointer; padding: 0; transition: all 0.25s; }
+  .sys-dot.active { background: var(--accent); width: 18px; border-radius: 3px; }
+  .sys-nav { display: flex; gap: 5px; align-items: center; }
+  .sys-counter { font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.08em; color: rgba(255,255,255,0.5); margin-right: 0.6rem; }
+  .sys-btn { width: 26px; height: 26px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.12); color: var(--paper); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; font-size: 15px; }
+  .sys-btn:hover { background: var(--accent); border-color: var(--accent); }
+  .sys-btn:disabled { opacity: 0.2; cursor: default; }
+
+  /* ── IMPACT / RESULTS ── */
+  .results-section { background: var(--paper); }
+  .results-lead { font-size: 0.82rem; color: var(--ink-soft); line-height: 1.75; padding: 0.9rem 0; max-width: 97ch; flex-shrink: 0; }
+  .results-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+    background: var(--rule); border: 1px solid var(--rule);
+    flex-shrink: 0;
+  }
+  .result-card { background: var(--paper); padding: 1.5rem 1.6rem; position: relative; overflow: hidden; transition: background 0.3s; display: flex; flex-direction: column; }
+  .result-card:hover { background: var(--paper-warm); }
+  .result-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+  .result-card::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--blue); transition: width 0.4s ease; }
+  .result-card:hover::after { width: 100%; }
+  .result-cat { font-family: 'DM Mono', monospace; font-size: 0.53rem; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.75rem; }
+  .result-card.op .result-cat { color: var(--purple); }
+  .result-card.wo .result-cat { color: var(--blue); }
+  .result-card.ac .result-cat { color: var(--gold); }
+  .result-card.fi .result-cat { color: var(--accent); }
+  .result-title { font-family: 'Cormorant Garamond', serif; font-size: 1.18rem; font-weight: 300; color: var(--ink); line-height: 1.25; margin-bottom: 0.65rem; }
+  .result-body { font-size: 0.78rem; color: var(--ink-soft); line-height: 1.6; flex: 1; }
+  .result-body strong { color: var(--ink); font-weight: 600; }
+
+  .cta-box {
+    border: 1px solid var(--rule); border-top: none; background: var(--paper-warm);
+    padding: 1.4rem 3rem; display: flex; align-items: center; justify-content: space-between;
+    gap: 2rem; flex-shrink: 0;
+  }
+  .cta-headline { font-family: 'Cormorant Garamond', serif; font-size: 1.7rem; font-weight: 300; line-height: 0.9; color: var(--ink); margin-bottom: 0.3rem; }
+  .cta-headline em { font-style: italic; color: var(--accent); }
+  .cta-sub { font-size: 0.8rem; color: var(--ink-soft); }
+  .cta-btn { display: inline-flex; align-items: center; gap: 0.55rem; background: var(--accent); color: #fff; font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; padding: 0.65rem 1.4rem; border: 1px solid var(--accent); transition: background 0.25s, border-color 0.25s; white-space: nowrap; flex-shrink: 0; }
+  .cta-btn:hover { background: var(--ink); border-color: var(--ink); }
+
+  footer {
+    background: var(--ink); padding: 0.8rem 1.5rem;
+    display: flex; justify-content: center; align-items: center;
+    border-top: 1px solid #1e1e1e; flex-shrink: 0;
+  }
+  .footer-text { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: #6b6b6b; letter-spacing: 0.09em; }
+
+  /* ── REVEAL ANIMATION ── */
+  .reveal { opacity: 1; transform: none; }
+  body.anim-ready .reveal { opacity: 0; transform: translateY(12px); transition: opacity 0.5s ease, transform 0.5s ease; }
+  body.anim-ready .reveal.visible { opacity: 1; transform: none; }
+  .d1 { transition-delay: 0.07s; }
+  .d2 { transition-delay: 0.14s; }
+  .d3 { transition-delay: 0.21s; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1024px) {
+    nav, .sec-inner { padding-left: 2rem; padding-right: 2rem; }
+    .hero-left { padding: 2.5rem 2rem 2.5rem 2rem; }
+    .hero-right { padding: 2.5rem 2rem; }
+    .sys-slide-meta { width: 220px; }
+    .arch-meta { width: 240px; }
+  }
+
+  @media (max-height: 640px) {
+    .snap-section, .hero-section { height: auto; overflow: visible; }
+    .section-header { padding: 0.7rem 0 0.5rem; }
+    .challenges-lead, .system-lead, .results-lead { padding: 0.6rem 0; }
+    .role-intro-block { padding: 0.8rem 0; }
+    .sys-slider { flex: 0 0 350px; }
+    .hero-tag { margin-bottom: 1.5rem; }
+  }
+
+  @media (max-width: 860px) {
+    html { scroll-snap-type: none !important; }
+    nav { padding: 0 1.2rem; }
+    .nav-links { display: none; }
+    .nav-back { padding-right: 1rem; margin-right: 1rem; font-size: 0.6rem; }
+    .snap-section,
+    .hero-section {
+      height: auto !important;
+      min-height: 0 !important;
+      overflow: visible !important;
+      scroll-snap-align: none !important;
+      scroll-snap-stop: unset !important;
+    }
+    .snap-section { padding-bottom: 2.5rem; }
+    .results-section { padding-bottom: 0; }
+    .sec-inner { padding: 0 1.5rem; flex: none; }
+    .section-header { padding: 1rem 0 0.75rem; }
+    .section-title { font-size: 1.6rem; }
+    .hero-section { grid-template-columns: 1fr; }
+    .hero-left {
+      padding: 2rem 1.5rem 1.5rem;
+      border-right: none; border-bottom: 1px solid var(--rule);
+      justify-content: flex-start;
+    }
+    .hero-tag { margin-bottom: 1.5rem; }
+    .hero-right { padding: 1.5rem; gap: 1.2rem; }
+    .challenges-lead { padding: 1rem 0; }
+    .challenge-grid { grid-template-columns: 1fr; }
+    .role-intro-block { padding: 1rem 0; }
+    .resp-grid { grid-template-columns: 1fr; grid-auto-rows: auto; flex: none; }
+    .responsibility { min-height: 0; }
+    .arch-diagram-wrap { flex-direction: column; max-height: none; flex: none; }
+    .arch-img-panel { min-height: 220px; max-height: 260px; }
+    .arch-meta {
+      width: 100%; border-left: none; border-top: 1px solid var(--rule);
+      flex-direction: column;
+    }
+    .arch-pillar {
+      flex: none; padding: 1rem 1.5rem; gap: 0.5rem;
+      border-bottom: 1px solid var(--rule); border-right: none;
+    }
+    .arch-pillar:last-child { border-bottom: none; }
+    .arch-pillar-arrow { display: flex; }
+    .sys-slider { flex: none; }
+    .sys-track-wrap { flex: none; }
+    .sys-track { height: auto; }
+    .sys-slide { flex-direction: column; height: auto; border-bottom: 1px solid var(--rule); }
+    .sys-slide:last-child { border-bottom: none; }
+    .sys-slide-meta { width: 100%; border-right: none; border-bottom: 1px solid var(--rule); padding: 1.2rem 1.5rem; gap: 0.6rem; }
+    .sys-slide-visual { min-height: 200px; padding: 1rem; }
+    .sys-controls { gap: 0; justify-content: space-between; padding: 0.5rem 1.2rem; }
+    .system-lead { padding: 0.8rem 0; }
+    .results-grid { grid-template-columns: 1fr; }
+    .cta-box { flex-direction: column; align-items: flex-start; padding: 1.5rem; }
+  }
+
+  @media (max-width: 480px) {
+    nav { padding: 0 1rem; }
+    .sec-inner { padding: 0 1rem; }
+    .hero-left { padding: 1.8rem 1rem 1.2rem; }
+    .hero-right { padding: 1.2rem 1rem; }
+    .hero-title { font-size: clamp(30px, 8vw, 42px); }
+    .section-title { font-size: 1.4rem; }
+    .challenge-card { padding: 1.1rem 1.2rem; }
+    .result-card { padding: 1.1rem 1.2rem; }
+    .cta-box { padding: 1.2rem 1rem; }
+    .arch-img-panel { max-height: 200px; }
+    .arch-pillar { padding: 0.9rem 1rem; }
+    .sys-slide-meta { padding: 1rem; }
+    .sys-slide-visual { min-height: 180px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-left">
+    <a href="#" class="nav-back"><span class="nav-back-arrow">&#8678;</span> Portfolio</a>
+    <a href="#hero" class="nav-logo" id="navLogo">Case Study — HR Analytics</a>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#challenges"><span class="nav-step">01/</span> Business Challenges</a></li>
+    <li><a href="#role"><span class="nav-step">02/</span> My Role</a></li>
+    <li><a href="#solution"><span class="nav-step">03/</span> Solution</a></li>
+    <li><a href="#system"><span class="nav-step">04/</span> The Dashboard</a></li>
+    <li><a href="#results"><span class="nav-step">05/</span> Impact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero-section" id="hero">
+  <div class="hero-left reveal">
+  <p class="hero-tag">The Project · Overview</p>
+  <h1 class="hero-title">Building a <em>Workforce</em><br>Intelligence System</h1>
+  <p class="hero-subtitle">Conducted a full-spectrum attrition analysis on a workforce of 4,410 — moving from surface symptoms to structural root cause, translating findings into a phased intervention roadmap designed for C-suite decision-making.</p>
+</div>
+
+<div class="hero-right">
+  <div class="hero-stat-grid">
+    <div class="hero-stat reveal">
+      <div class="stat-number">16%</div>
+      <div class="stat-label">Annual<br>Attrition Rate</div>
+    </div>
+    <div class="hero-stat reveal d1">
+      <div class="stat-number">$33<sup>M</sup></div>
+      <div class="stat-label">Annual<br>Turnover Cost</div>
+    </div>
+    <div class="hero-stat reveal d2">
+      <div class="stat-number">312</div>
+      <div class="stat-label">High-Risk Employees<br>Identified</div>
+    </div>
+    <div class="hero-stat reveal d3">
+      <div class="stat-number">8%</div>
+      <div class="stat-label">Target Attrition<br>in 24 Months</div>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <p class="tags-eyebrow">Capabilities demonstrated</p>
+    <div class="tag-row">
+      <span class="tag tag-accent">Analytical Thinking</span>
+      <span class="tag tag-teal">Decision Support</span>
+      <span class="tag tag-blue">Data Storytelling</span>
+      <span class="tag tag-dark">People Analytics</span>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- CHALLENGES -->
+<section class="snap-section challenges-section" id="challenges">
+  <div class="sec-inner">
+    <div class="section-header reveal">
+      <span class="section-number">01</span>
+      <h2 class="section-title">Business <em>Challenges</em></h2>
+    </div>
+    <p class="challenges-lead reveal">At 16% annual attrition — above the benchmark — the organization was losing talent faster than it could retain.<br> Yet the more pressing problem was not the rate itself, it was that no one could explain what was driving it.</p>
+    <div class="challenge-grid reveal">
+      <div class="challenge-card">
+        <p class="challenge-tag">Talent Sustainability Gap</p>
+        <h3 class="challenge-title">Attrition Without a Traceable Cause</h3>
+        <p class="challenge-body">Turnover remained above benchmark, yet no mechanism existed to determine whether it was driven by structural misalignment, compensation gaps, career ceiling, or market pull. Without distinguishing the root cause, any intervention risked treating the symptom.</p>
+        <div class="challenge-risk"><p>Risk: Misdiagnosing an attrition driver doesn't just waste retention spend — it accelerates the erosion of institutional knowledge while weakening employer brand</p></div>
+      </div>
+      <div class="challenge-card">
+        <p class="challenge-tag">Diagnostic Segmentation Gap</p>
+        <h3 class="challenge-title">No Profile of Who Is Leaving</h3>
+        <p class="challenge-body">Aggregate attrition figures were never broken down by segments — leaving the organization unable to determine whether departures were evenly distributed or clustered within a group of employees whose loss carried outsized impact.</p>
+        <div class="challenge-risk"><p>Risk: Retention resources spread uniformly across the workforce protect everyone in theory — but a concentrated problem demands a targeted response</p></div>
+      </div>
+      <div class="challenge-card">
+        <p class="challenge-tag">HR Capacity Gap</p>
+        <h3 class="challenge-title">The Solving Team Is Breaking Down</h3>
+        <p class="challenge-body">As annual departures across the organization exceeded 700, the HR department faced mounting recruitment and onboarding demand — while simultaneously experiencing its own elevated attrition at 30%, the highest rate across all departments.</p>
+        <div class="challenge-risk"><p>Risk: The function responsible for stabilizing workforce turnover was itself in crisis, the organization's capacity to recover would be structurally compromised</p></div>
+      </div>
+      <div class="challenge-card">
+        <p class="challenge-tag">Executive Decision Gap</p>
+        <h3 class="challenge-title">Data Present, Informed Decisions Absent</h3>
+        <p class="challenge-body">Workforce data existed across systems, but no analytical framework synthesized it into a coherent picture of underlying causes. The gap between raw data and actionable insights remained unbridged — leaving leadership without a solid basis for decision-making.</p>
+        <div class="challenge-risk"><p>Risk: The data remains descriptive rather than prescriptive, and retention strategies default to intuition rather than evidence</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MY ROLE -->
+<section class="snap-section role-section" id="role">
+  <div class="sec-inner">
+    <div class="section-header reveal">
+      <span class="section-number">02</span>
+      <h2 class="section-title">My Role &amp; <em>Ownership</em></h2>
+    </div>
+    <div class="role-intro-block reveal">
+      <div class="role-intro-text">
+        <p>Sole Analyst & Report Author — End-to-End Analytical Product Development<br>
+    Approached a real-world workforce dataset as a business problem to be solved — framing the analytical questions, designing the reporting structure, building the dashboard through multiple iterations, and presenting the findings as a decision-ready narrative.</p>
+      </div>
+    </div>
+    <div class="resp-grid">
+      <div class="responsibility reveal">
+        <div class="resp-meta"><span class="resp-num">01</span> / Diagnosis</div>
+        <div class="resp-content">
+          <h4>Problem Structuring</h4>
+          <p>Reviewed the dataset against the organization's stated objective — reducing attrition — and translated it into a set of analytical questions: what is driving departures, which segments are most at risk, and what would it take to make the findings actionable for leadership.</p>
+        </div>
+      </div>
+      <div class="responsibility reveal d1">
+        <div class="resp-meta"><span class="resp-num">02</span> / Plan</div>
+        <div class="resp-content">
+          <h4>Analytical Blueprint</h4>
+          <p>Defined the reporting structure before building: key stakeholders, expected output that would answer each question, analysis framework (metrics and dimensions) that helps clarify root cause, a mockup that show the structural report.</p>
+        </div>
+      </div>
+      <div class="responsibility reveal d2">
+        <div class="resp-meta"><span class="resp-num">03</span> / Design</div>
+        <div class="resp-content">
+          <h4>Data Preparation</h4>
+          <p>Connected the dataset to Power BI, cleaned data with Power Query, built the data model and DAX measures needed for segment-level analysis, then developed each report page — using visual types selected for analytical clarity rather than aesthetic variety.</p>
+        </div>
+      </div>
+      <div class="responsibility reveal">
+        <div class="resp-meta"><span class="resp-num">04</span> / Investigate</div>
+        <div class="resp-content">
+          <h4>Insight Development</h4>
+          <p>Conducted the full analytical sequence: from surface patterns (volume, department, level) to cross-dimensional analysis (satisfaction vs. retention, compensation vs. tenure) — identifying the structural misalignment that prior analyses had missed.</p>
+        </div>
+      </div>
+      <div class="responsibility reveal d1">
+        <div class="resp-meta"><span class="resp-num">05</span> / Frame</div>
+        <div class="resp-content">
+          <h4>Executive Communication Design</h4>
+          <p>Structured findings into a narrative arc designed for C-suite consumption — sequencing the story from symptom to root cause to intervention, with an executive summary formatted for a sub-two-minute read.</p>
+        </div>
+      </div>
+      <div class="responsibility reveal d2">
+        <div class="resp-meta"><span class="resp-num">06</span> / Validate</div>
+        <div class="resp-content">
+          <h4>Financial Rigor</h4>
+          <p>Stress-tested all projections against conservative assumptions — walking back initial ROI estimates from an optimistic 129% to a defensible 37.7%, with full documentation of calculation basis and phase-specific cost trajectories.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section class="snap-section solution-section" id="solution">
+  <div class="sec-inner">
+    <div class="section-header reveal">
+      <span class="section-number">03</span>
+      <h2 class="section-title">Analytical <em>Framework</em></h2>
+    </div>
+    <p class="system-lead reveal">The core analytical principle — <i>follow the evidence, not the hypothesis.</i><br>
+    Each layer of the framework was designed to either confirm or disconfirm the layer before it, separating structural causes from behavioral symptoms before any intervention was recommended.</p>
+
+    <div class="arch-diagram-wrap reveal">
+
+      <!-- Left: framework diagram placeholder -->
+      <div class="arch-img-panel">
+        <img src="" alt="Three-layer analytical framework diagram: Workforce Profiling → Attrition Segmentation → Structural Investigation" class="arch-diagram-img"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="arch-diagram-fallback">
+          <span class="arch-fallback-label">Analytical Framework Diagram</span>
+        </div>
+      </div>
+
+      <!-- Right: three analytical layers -->
+      <div class="arch-meta">
+
+        <div class="arch-pillar">
+          <div class="arch-pillar-title"><em>Workforce Profiling</em></div>
+          <p class="arch-pillar-body">Baseline characterization across satisfaction, tenure, experience, working hours, and compensation — establishing systemic context before segmentation began.</p>
+          <div class="arch-pillar-arrow">↓</div>
+        </div>
+
+        <div class="arch-pillar">
+          <div class="arch-pillar-title"><em>Attrition Segmentation</em></div>
+          <p class="arch-pillar-body">Progressive funnel analysis isolating high-risk segments by volume (who is leaving) and by rate (which groups are disproportionately affected) — converging on 312 employees as the precision intervention target.</p>
+          <div class="arch-pillar-arrow">↓</div>
+        </div>
+
+        <div class="arch-pillar">
+          <div class="arch-pillar-title"><em>Structural Investigation</em></div>
+          <p class="arch-pillar-body">Cross-referencing org classification data against role and attrition records — revealing 711 employees misclassified across departments as the primary driver of reported attrition patterns.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE DASHBOARD -->
+<section class="snap-section system-section" id="system">
+  <div class="sec-inner">
+    <div class="section-header reveal">
+      <span class="section-number">04</span>
+      <h2 class="section-title">The <em>Dashboard</em></h2>
+    </div>
+    <p class="system-lead reveal">Built on Power BI, the report connects every analytical layer into a single navigable system —<br>from the CEO's 60-second executive brief to the point Finance can trace a departure cohort to its structural origin.</p>
+
+    <div class="sys-slider reveal">
+      <div class="sys-track-wrap">
+        <div class="sys-track" id="sysTrack">
+
+          <div class="sys-slide">
+            <div class="sys-slide-meta">
+              <span class="sys-slide-label">01 / Executive Layer</span>
+              <div class="sys-slide-title">The 60-Second Brief</div>
+              <p class="sys-slide-desc">Designed for CEO and Board consumption. Four scorecards anchor the investment case at a glance — crisis cost, root cause count, required investment, and projected return. Below, the challenge, key findings, and 3-phase recommendations are formatted to strict line-length discipline: each line readable without re-reading.</p>
+            </div>
+            <div class="sys-slide-visual">
+              <img src="" alt="Power BI Executive Summary page — four scorecards showing $33M waste, 711 root cause employees, $22M investment, 37.7% ROI" onerror="this.setAttribute('data-error','1')">
+              <div class="slide-fallback">
+                <span style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-muted);">Page 01 — Executive Summary</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sys-slide">
+            <div class="sys-slide-meta">
+              <span class="sys-slide-label">02 / Diagnostic Layer</span>
+              <div class="sys-slide-title">Workforce Profile</div>
+              <p class="sys-slide-desc">Five visualizations establish the systemic context: satisfaction scores uniformly below threshold; a tenure cliff at the 2–3 year mark; a bimodal experience distribution revealing strong attraction but weak retention; flat working hours across all age cohorts — disproving overtime as a causal factor; and compensation stagnation across every tenure group.</p>
+            </div>
+            <div class="sys-slide-visual">
+              <img src="" alt="Power BI Company Overview page — five charts showing satisfaction scores, tenure cliff, experience distribution, working hours by age, compensation by tenure" onerror="this.setAttribute('data-error','1')">
+              <div class="slide-fallback">
+                <span style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-muted);">Page 02 — Workforce Profile</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sys-slide">
+            <div class="sys-slide-meta">
+              <span class="sys-slide-label">03 / Volume Layer</span>
+              <div class="sys-slide-title">Hot Spot Mapping</div>
+              <p class="sys-slide-desc">A progressive analytical funnel: 711 total departures → 654 in R&amp;D and Sales (92%) → 510 at Level 1–2 (78%) → 312 across three specific roles (44%). Each filter narrows the intervention target from company-wide to surgical — enabling retention spend to be concentrated where return per dollar is highest.</p>
+            </div>
+            <div class="sys-slide-visual">
+              <img src="" alt="Power BI Volume Analysis page — drilldown funnel from 711 total to 312 hot spot employees across donut chart, bar charts, and bubble chart by age" onerror="this.setAttribute('data-error','1')">
+              <div class="slide-fallback">
+                <span style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-muted);">Page 03 — Volume Analysis</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sys-slide">
+            <div class="sys-slide-meta">
+              <span class="sys-slide-label">04 / Rate Layer</span>
+              <div class="sys-slide-title">The Dead Angle</div>
+              <p class="sys-slide-desc">HR's reported 30% attrition rate examined through a role-level breakdown: of 189 employees classified under HR, only three hold actual HR roles — with 0% attrition. The "HR crisis" was a data artifact, not an organizational failure. Multi-dimensional analysis and a Sankey diagram of stock option gaps complete the rate-level picture.</p>
+            </div>
+            <div class="sys-slide-visual">
+              <img src="" alt="Power BI Quality Analysis page — HR roles stacked bar showing 0% true HR attrition, multi-dimensional slicer analysis, Sankey diagram of stock option gaps" onerror="this.setAttribute('data-error','1')">
+              <div class="slide-fallback">
+                <span style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-muted);">Page 04 — Rate Analysis</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sys-slide">
+            <div class="sys-slide-meta">
+              <span class="sys-slide-label">05 / Structural Layer</span>
+              <div class="sys-slide-title">Root Cause</div>
+              <p class="sys-slide-desc">The analytical conclusion. A Sankey diagram maps 711 employees from their current misclassified departments to their correct functional assignments — making the structural misalignment visible in a single view. Side-by-side composition charts show how attrition rates normalize post-realignment: HR from 30% to 15%, through org architecture alone.</p>
+            </div>
+            <div class="sys-slide-visual">
+              <img src="" alt="Power BI Restructure page — Sankey diagram of 711 employees flowing between departments, side-by-side stacked columns showing current vs proposed attrition rates" onerror="this.setAttribute('data-error','1')">
+              <div class="slide-fallback">
+                <span style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-muted);">Page 05 — Root Cause</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sys-slide">
+            <div class="sys-slide-meta">
+              <span class="sys-slide-label">06 / Decision Layer</span>
+              <div class="sys-slide-title">Intervention Roadmap</div>
+              <p class="sys-slide-desc">The action-oriented close. A phased roadmap sequences three intervention stages — from stabilization (16%→12%) to consolidation (12%→10%) to excellence (10%→8%) — each with defined initiatives and cost inputs. A seven-KPI success metrics table tracks progress across baseline, Month 6, Month 12, and Month 24.</p>
+            </div>
+            <div class="sys-slide-visual">
+              <img src="" alt="Power BI Decision Playbook page — 3-phase roadmap visual and success metrics table with 7 KPIs tracked across four time periods" onerror="this.setAttribute('data-error','1')">
+              <div class="slide-fallback">
+                <span style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-muted);">Page 06 — Decision Playbook</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="sys-controls">
+        <div class="sys-dots" id="sysDots"></div>
+        <div class="sys-nav">
+          <span class="sys-counter" id="sysCounter">1 / 6</span>
+          <button class="sys-btn" id="sysPrev" aria-label="Previous">&#8592;</button>
+          <button class="sys-btn" id="sysNext" aria-label="Next">&#8594;</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section class="snap-section results-section" id="results">
+  <div class="sec-inner">
+    <div class="section-header reveal">
+      <span class="section-number">05</span>
+      <h2 class="section-title">Business Value <em>Delivered</em></h2>
+    </div>
+    <p class="results-lead reveal">The report created four distinct decision-support capabilities with an evidence-based intervention framework — each addressing a gap that had previously made informed retention action impossible.</p>
+    <div class="results-grid">
+      <div class="result-card op reveal">
+        <p class="result-cat">✔ Diagnostic Clarity</p>
+        <h3 class="result-title">Root Cause Identified. Interventions Redirected.</h3>
+        <p class="result-body"><strong>Structural Finding</strong> — Organizational misalignment was identified as the primary attrition driver: 711 employees in misclassified roles, generating phantom metrics that had misdirected retention efforts for years.<br><br>
+        <strong>Immediate Corrective Action</strong> — An 8-week functional realignment was scoped as the first intervention — requiring no new headcount and projected to halve HR's reported attrition rate immediately upon execution.</p>
+      </div>
+      <div class="result-card ac reveal d1">
+        <p class="result-cat">✔ Intervention Precision</p>
+        <h3 class="result-title">44% of Attrition. 7% of Workforce. One Cohort.</h3>
+        <p class="result-body"><strong>Targeted Segmentation</strong> — 312 employees across three roles, two departments, and a defined tenure window were isolated as the highest-risk cohort — enabling retention investment to be concentrated rather than distributed.<br><br>
+        <strong>ROI Efficiency</strong> — Targeted interventions for this cohort were projected to generate 3–4× the return of equivalent company-wide programs, with $2.8M in salary corrections estimated to recover $27M in avoided turnover cost.</p>
+      </div>
+      <div class="result-card wo reveal d2">
+        <p class="result-cat">✔ Financial Defensibility</p>
+        <h3 class="result-title">From Optimistic Projection to Board-Ready Case</h3>
+        <p class="result-body"><strong>Conservative Framing</strong> — Initial ROI projections were stress-tested and revised downward — from 129% to a defensible 37.7% — with full documentation of calculation basis, phase-specific cost trajectories, and contingency buffers.<br><br>
+        <strong>CFO-Ready Model</strong> — The $22M investment case and $31M net savings projection were structured to withstand line-by-line scrutiny, providing leadership with a number they could defend rather than one they would need to qualify.</p>
+      </div>
+      <div class="result-card fi reveal d3">
+        <p class="result-cat">✔ Decision Infrastructure</p>
+        <h3 class="result-title">A Monitoring Framework, Not Just a Recommendation</h3>
+        <p class="result-body"><strong>Ongoing Visibility</strong> — The dashboard's seven-KPI success metrics table gave leadership a structured tracking layer — translating a one-time analysis into an operational monitoring tool for the full 24-month intervention period.<br><br>
+        <strong>Adaptive Management</strong> — Phase-gated milestones with defined go/no-go criteria enabled leadership to adjust investment pace based on actual results, rather than committing to a fixed plan against an uncertain execution environment.</p>
+      </div>
+    </div>
+    <div style="flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center;">
+      <div class="cta-box reveal">
+        <div>
+          <h3 class="cta-headline">Let's Work <em>Together</em></h3>
+          <p class="cta-sub">I'd be glad to explore how I can support your team.</p>
+        </div>
+        <a class="cta-btn" href="https://mail.google.com/mail/u/0/?fs=1&to=hahp.working@gmail.com&su=%5BPortfolio%5D+HR+Analytics&body=Hi+Ha,%0A%0AI+came+across+your+portfolio+and+would+love+to+explore+how+we+might+work+together.%0AWhen+would+you+be+available+for+a+quick+chat?%0A%0ABest+regards,&tf=cm" target="_blank">Get in touch &#8594;</a>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <p class="footer-text">HR Analytics &nbsp;&middot;&nbsp; Project 2024 &nbsp;&middot;&nbsp; Strategic Analysis &amp; Data Visualization</p>
+  </footer>
+</section>
+
+<script>
+  /* ── REVEAL ── */
+  function revealAll() {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+  }
+  function initReveal() {
+    document.body.classList.add('anim-ready');
+    if (!('IntersectionObserver' in window)) { revealAll(); return; }
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+      });
+    }, { threshold: 0.04 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    setTimeout(() => {
+      const still = document.querySelectorAll('.reveal:not(.visible)');
+      if (still.length) revealAll();
+    }, 600);
+  }
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(initReveal);
+  } else {
+    window.addEventListener('load', initReveal);
+  }
+  setTimeout(revealAll, 1000);
+
+  /* ── Progress bar ── */
+  window.addEventListener('scroll', () => {
+    const d = document.documentElement;
+    document.getElementById('progress').style.width =
+      (d.scrollTop / (d.scrollHeight - d.clientHeight) * 100) + '%';
+  });
+
+  /* ── Wheel snap ── */
+  const SECTIONS = ['hero', 'challenges', 'role', 'solution', 'system', 'results'];
+  let snapping = false;
+
+  function getNearestSection() {
+    const mid = window.scrollY + window.innerHeight * 0.5;
+    let best = 0, bestDist = Infinity;
+    SECTIONS.forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const c = el.getBoundingClientRect().top + window.scrollY + el.offsetHeight * 0.5;
+      const dist = Math.abs(c - mid);
+      if (dist < bestDist) { bestDist = dist; best = i; }
+    });
+    return best;
+  }
+
+  window.addEventListener('wheel', (e) => {
+    if (window.innerWidth <= 860) return;
+    if (snapping) { e.preventDefault(); return; }
+    const dir = e.deltaY > 0 ? 1 : -1;
+    const cur = getNearestSection();
+    const nxt = Math.max(0, Math.min(SECTIONS.length - 1, cur + dir));
+    if (nxt === cur) return;
+    e.preventDefault();
+    snapping = true;
+    document.getElementById(SECTIONS[nxt]).scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => { snapping = false; }, 950);
+  }, { passive: false });
+
+  /* ── Nav clicks ── */
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const id = link.getAttribute('href').slice(1);
+      const target = document.getElementById(id);
+      if (!target) return;
+      e.preventDefault();
+      snapping = true;
+      target.scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => { snapping = false; }, 950);
+    });
+  });
+
+  /* ── Active nav highlight ── */
+  const navAs = document.querySelectorAll('.nav-links a, .nav-logo');
+  const secObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting && e.intersectionRatio >= 0.4) {
+        navAs.forEach(a => a.classList.remove('active'));
+        const a = document.querySelector(`a[href="#${e.target.id}"]`);
+        if (a) a.classList.add('active');
+      }
+    });
+  }, { threshold: 0.55 });
+  SECTIONS.forEach(id => { const el = document.getElementById(id); if (el) secObs.observe(el); });
+
+  /* ── Dashboard Slider ── */
+  const track   = document.getElementById('sysTrack');
+  const dotsEl  = document.getElementById('sysDots');
+  const btnPrev = document.getElementById('sysPrev');
+  const btnNext = document.getElementById('sysNext');
+  const counter = document.getElementById('sysCounter');
+  const slides  = track ? [...track.querySelectorAll('.sys-slide')] : [];
+  const total   = slides.length;
+  let cur = 0;
+
+  /* Handle broken images → show fallback div */
+  document.querySelectorAll('.sys-slide-visual img').forEach(img => {
+    img.addEventListener('error', () => {
+      img.style.display = 'none';
+      const fb = img.nextElementSibling;
+      if (fb) fb.style.display = 'flex';
+    });
+    /* Trigger error if src is empty */
+    if (!img.src || img.src === window.location.href) {
+      img.dispatchEvent(new Event('error'));
+    }
+  });
+
+  /* Also handle arch diagram */
+  const archImg = document.querySelector('.arch-diagram-img');
+  if (archImg) {
+    archImg.addEventListener('error', () => {
+      archImg.style.display = 'none';
+      const fb = archImg.nextElementSibling;
+      if (fb) fb.style.display = 'flex';
+    });
+    if (!archImg.src || archImg.src === window.location.href) {
+      archImg.dispatchEvent(new Event('error'));
+    }
+  }
+
+  if (total > 0) {
+    slides.forEach((_, i) => {
+      const d = document.createElement('button');
+      d.className = 'sys-dot' + (i === 0 ? ' active' : '');
+      d.setAttribute('aria-label', 'Slide ' + (i + 1));
+      d.addEventListener('click', () => goTo(i));
+      dotsEl.appendChild(d);
+    });
+
+    function updateSlider() {
+      track.style.transform = `translateX(-${cur * 100}%)`;
+      dotsEl.querySelectorAll('.sys-dot').forEach((d, i) => d.classList.toggle('active', i === cur));
+      counter.textContent = (cur + 1) + ' / ' + total;
+      btnPrev.disabled = cur === 0;
+      btnNext.disabled = cur === total - 1;
+    }
+
+    function goTo(n) { cur = Math.max(0, Math.min(n, total - 1)); updateSlider(); }
+
+    btnPrev.addEventListener('click', () => goTo(cur - 1));
+    btnNext.addEventListener('click', () => goTo(cur + 1));
+
+    document.addEventListener('keydown', e => {
+      const sys = document.getElementById('system');
+      if (!sys) return;
+      const r = sys.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) {
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); goTo(cur - 1); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); goTo(cur + 1); }
+      }
+    });
+
+    let tx = 0;
+    track.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+    track.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - tx;
+      if (Math.abs(dx) > 44) goTo(dx < 0 ? cur + 1 : cur - 1);
+    });
+
+    updateSlider();
+  }
+</script>
+</body>
+</html>
