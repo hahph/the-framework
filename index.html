@@ -482,7 +482,7 @@
 <!-- NAV -->
 <nav>
   <div class="nav-left">
-    <a href="#" class="nav-back"><span class="nav-back-arrow">&#8678;</span> Portfolio</a>
+   <a href="#" class="nav-back" id="backToPortfolio"> <span class="nav-back-arrow">&#8678;</span> Portfolio</a>
     <a href="#hero" class="nav-logo" id="navLogo">Case Study — HR Analytics</a>
   </div>
   <ul class="nav-links">
@@ -1013,6 +1013,35 @@
 
     updateSlider();
   }
+
+   /* ── Bridge: Back to Portfolio when embedded in iframe ── */
+  (function () {
+    const backLink = document.querySelector('.nav-back');
+    if (!backLink) return;
+
+    backLink.addEventListener('click', function (e) {
+      const isEmbedded = window.self !== window.top;
+
+      if (isEmbedded) {
+        e.preventDefault();
+
+        // Tell parent landing page to close modal
+        window.parent.postMessage({ type: 'CLOSE_CASE_STUDY' }, '*');
+        return;
+      }
+
+      // Fallback when opened as standalone website
+      // Option A: go to landing page
+      // window.location.href = 'https://your-landing-page-url.com';
+
+      // Option B: go back to previous page
+      if (window.history.length > 1) {
+        e.preventDefault();
+        window.history.back();
+      }
+    });
+  })();
+ 
 </script>
 </body>
 </html>
