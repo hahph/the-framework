@@ -1015,32 +1015,25 @@
   }
 
    /* ── Bridge: Back to Portfolio when embedded in iframe ── */
-  (function () {
-    const backLink = document.querySelector('.nav-back');
-    if (!backLink) return;
+  const backBtn = document.getElementById("backToPortfolio");
 
-    backLink.addEventListener('click', function (e) {
-      const isEmbedded = window.self !== window.top;
+if (backBtn) {
+  backBtn.addEventListener("click", function (e) {
+    e.preventDefault();
 
-      if (isEmbedded) {
-        e.preventDefault();
+    const isEmbedded = window.parent && window.parent !== window;
 
-        // Tell parent landing page to close modal
-        window.parent.postMessage({ type: 'CLOSE_CASE_STUDY' }, '*');
-        return;
-      }
-
-      // Fallback when opened as standalone website
-      // Option A: go to landing page
-      // window.location.href = 'https://your-landing-page-url.com';
-
-      // Option B: go back to previous page
-      if (window.history.length > 1) {
-        e.preventDefault();
+    if (isEmbedded) {
+      window.parent.postMessage({ type: "CLOSE_CASE_STUDY" }, "*");
+    } else {
+      if (document.referrer) {
         window.history.back();
+      } else {
+        window.location.href = "/";
       }
-    });
-  })();
+    }
+  });
+}
  
 </script>
 </body>
